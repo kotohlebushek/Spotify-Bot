@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher
 from bot.config import BOT_TOKEN
 from bot.database.db import init_db
-from bot.handlers import user
+from bot.handlers import user, spotify
 
 
 async def setup_bot() -> Dispatcher:
@@ -15,6 +15,7 @@ async def setup_bot() -> Dispatcher:
     # Регистрация всех роутеров
     dp.include_routers(
         user.router,
+        spotify.router
     )
 
     return dp, bot

@@ -1,5 +1,6 @@
+import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from bot.config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI
+from bot.config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI, SOCKS5_PROXY
 from bot.database.models import User  # Модель пользователя
 from tortoise.transactions import in_transaction
 
@@ -7,7 +8,8 @@ oauth = SpotifyOAuth(
     client_id=SPOTIFY_CLIENT_ID,
     client_secret=SPOTIFY_CLIENT_SECRET,
     redirect_uri=SPOTIFY_REDIRECT_URI,
-    scope="user-library-read user-library-modify user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative"
+    scope="user-library-read user-library-modify user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative",
+    proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY}
 )
 
 
@@ -21,3 +23,72 @@ async def exchange_code_for_token(code: str, telegram_id: int):
         user.spotify_access_token = access_token
         user.spotify_refresh_token = refresh_token
         await user.save()
+
+
+def get_spotify_client(user):
+    return spotipy.Spotify(auth=user.spotify_access_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
+
+
+async def search_tracks(user, query):
+    sp = get_spotify_client(user)
+    result = sp.search(q=query, type="track", limit=5)
+
+    tracks = []
+    for item in result["tracks"]["items"]:
+        tracks.append({
+            "id": item["id"],
+            "name": item["name"],
+            "artist": item["artists"][0]["name"],
+            "spotify_url": item["external_urls"]["spotify"]
+        })
+    return tracks
+
+
+async def get_track_info(user, track_id):
+    try:
+        sp = get_spotify_client(user)
+        track = sp.track(track_id)
+        return {
+            "id": track["id"],
+            "name": track["name"],
+            "artist": track["artists"][0]["name"],
+            "spotify_url": track["external_urls"]["spotify"]
+        }
+    except Exception as e:
+        print(f"Error fetching track info: {e}")
+        return None
+
+
+async def play_track(user, track_id):
+    try:
+        sp = get_spotify_client(user)
+
+        devices = sp.devices()
+        if not devices["devices"]:
+            return False, "❌ Нет активного устройства Spotify."
+
+        # Получим ID первого активного устройства (или можно сделать выбор вручную позже)
+        device_id = devices["devices"][0]["id"]
+
+        sp.start_playback(
+            device_id=device_id,
+            uris=[f"spotify:track:{track_id}"]
+        )
+
+        return True, "▶️ Воспроизведение началось!"
+    except spotipy.exceptions.SpotifyException as e:
+        print(f"SpotifyException: {e}")
+        return False, "❌ Ошибка при воспроизведении (возможно, нет Premium?)"
+    except Exception as e:
+        print(f"Error playing track: {e}")
+        return False, "❌ Ошибка при воспроизведении."
+
+
+async def like_track(user, track_id):
+    try:
+        sp = get_spotify_client(user)
+        sp.current_user_saved_tracks_add([track_id])
+        return True
+    except Exception as e:
+        print(f"Error liking track: {e}")
+        return False
