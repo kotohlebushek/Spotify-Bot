@@ -25,12 +25,49 @@ async def exchange_code_for_token(code: str, telegram_id: int):
         await user.save()
 
 
-def get_spotify_client(user):
-    return spotipy.Spotify(auth=user.spotify_access_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
+async def refresh_user_token(user: User):
+    """Обновляет access_token пользователя через refresh_token"""
+    try:
+        token_info = oauth.refresh_access_token(user.spotify_refresh_token)
+        access_token = token_info["access_token"]
+
+        async with in_transaction():
+            user.spotify_access_token = access_token
+            # сохраняем, если пришёл новый refresh_token (иногда Spotify присылает его)
+            if "refresh_token" in token_info:
+                user.spotify_refresh_token = token_info["refresh_token"]
+            await user.save()
+
+        return access_token
+    except Exception as e:
+        print(f"Ошибка обновления токена: {e}")
+        return None
+
+
+async def get_spotify_client(user: User):
+    """
+    Возвращает Spotipy клиент.
+    Если токен истёк — обновляет его.
+    """
+
+    # Попробуем проверить работу токена простым запросом
+    sp = spotipy.Spotify(auth=user.spotify_access_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
+    try:
+        sp.current_user()  # тестовый запрос
+    except spotipy.exceptions.SpotifyException as e:
+        if e.http_status == 401:  # Unauthorized — токен истёк
+            new_token = await refresh_user_token(user)
+            if not new_token:
+                raise e
+            sp = spotipy.Spotify(auth=new_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
+        else:
+            raise e
+
+    return sp
 
 
 async def search_tracks(user, query):
-    sp = get_spotify_client(user)
+    sp = await get_spotify_client(user)
     result = sp.search(q=query, type="track", limit=5)
 
     tracks = []
@@ -46,7 +83,7 @@ async def search_tracks(user, query):
 
 async def get_track_info(user, track_id):
     try:
-        sp = get_spotify_client(user)
+        sp = await get_spotify_client(user)
         track = sp.track(track_id)
         return {
             "id": track["id"],
@@ -61,7 +98,7 @@ async def get_track_info(user, track_id):
 
 async def play_track(user, track_id):
     try:
-        sp = get_spotify_client(user)
+        sp = await get_spotify_client(user)
 
         devices = sp.devices()
         if not devices["devices"]:
@@ -86,7 +123,7 @@ async def play_track(user, track_id):
 
 async def like_track(user, track_id):
     try:
-        sp = get_spotify_client(user)
+        sp = await get_spotify_client(user)
         sp.current_user_saved_tracks_add([track_id])
         return True
     except Exception as e:
