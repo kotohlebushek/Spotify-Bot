@@ -10,7 +10,6 @@ oauth = SpotifyOAuth(
     redirect_uri=SPOTIFY_REDIRECT_URI,
     scope="user-library-read user-library-modify user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative",
     proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY}
-
 )
 
 
