@@ -10,8 +10,12 @@ __pycache__/
 # Виртуальное окружение
 venv/
 .venv/
+.env
 *.log
 db.*
+
+# Spotify
+.cache
 
 # OS
 .DS_Store
