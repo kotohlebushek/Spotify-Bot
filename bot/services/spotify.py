@@ -8,6 +8,7 @@ from bot.config import (
 )
 from bot.database.models import User
 from tortoise.transactions import in_transaction
+from bot.utils.logger import logger
 
 # Инициализация OAuth клиента Spotify
 oauth = SpotifyOAuth(
@@ -57,7 +58,7 @@ async def refresh_user_token(user: User) -> str | None:
 
         return access_token
     except Exception as e:
-        print(f"Ошибка обновления токена: {e}")
+        logger.error(f"Ошибка обновления токена: {e}")
         return None
 
 
@@ -110,7 +111,7 @@ async def get_track_info(user: User, track_id: str) -> dict | None:
             "spotify_url": track["external_urls"]["spotify"]
         }
     except Exception as e:
-        print(f"Error fetching track info: {e}")
+        logger.info(f"Error fetching track info: {e}")
         return None
 
 
@@ -128,10 +129,10 @@ async def play_track(user: User, track_id: str) -> tuple[bool, str]:
         sp.start_playback(device_id=device_id, uris=[f"spotify:track:{track_id}"])
         return True, "▶️ Воспроизведение началось!"
     except spotipy.exceptions.SpotifyException as e:
-        print(f"SpotifyException: {e}")
+        logger.error(f"SpotifyException: {e}")
         return False, "❌ Ошибка при воспроизведении (возможно, нет Premium?)"
     except Exception as e:
-        print(f"Error playing track: {e}")
+        logger.error(f"Error playing track: {e}")
         return False, "❌ Ошибка при воспроизведении."
 
 
@@ -142,7 +143,7 @@ async def like_track(user: User, track_id: str) -> bool:
         sp.current_user_saved_tracks_add([track_id])
         return True
     except Exception as e:
-        print(f"Error liking track: {e}")
+        logger.error(f"Error liking track: {e}")
         return False
 
 
@@ -158,8 +159,8 @@ async def add_track_to_queue(user: User, track_id: str) -> tuple[bool, str]:
         sp.add_to_queue(uri=f"spotify:track:{track_id}")
         return True, "➕ Трек добавлен в очередь!"
     except spotipy.exceptions.SpotifyException as e:
-        print(f"SpotifyException: {e}")
+        logger.error(f"SpotifyException: {e}")
         return False, "❌ Ошибка при добавлении в очередь (возможно, нет Premium?)"
     except Exception as e:
-        print(f"Error adding to queue: {e}")
+        logger.error(f"Error adding to queue: {e}")
         return False, "❌ Ошибка при добавлении в очередь."
