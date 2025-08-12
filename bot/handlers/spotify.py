@@ -6,44 +6,75 @@ from aiogram.types import (
     InlineKeyboardButton,
 )
 from bot.database.models import User
-from bot.services.spotify import get_spotify_client, like_track, search_tracks, get_track_info
+from bot.services.spotify import (
+    get_spotify_client,
+    like_track,
+    search_tracks,
+    get_track_info,
+)
 
 router = Router()
 
 
-# /search команда
 @router.message(F.text.startswith("/search"))
 async def search_command(message: Message):
+    """
+    Обработчик команды /search — выполняет поиск треков в Spotify.
+
+    Шаги:
+        1. Получаем запрос пользователя (всё, что идёт после /search).
+        2. Проверяем, авторизован ли пользователь в Spotify.
+        3. Делаем запрос к API Spotify на поиск треков.
+        4. Если треки найдены — выводим inline-клавиатуру с результатами.
+           Каждая кнопка = исполнитель + название трека.
+    """
+    # Убираем "/search" и лишние пробелы
     query = message.text.replace("/search", "").strip()
 
+    # Если пользователь не ввёл текст запроса
     if not query:
         await message.answer("🔎 Введите запрос: `/search название трека`", parse_mode="Markdown")
         return
 
+    # Получаем пользователя из БД
     user = await User.get_or_none(telegram_id=message.from_user.id)
     if not user or not user.spotify_access_token:
         await message.answer("⚠️ Сначала авторизуйтесь через /start.")
         return
 
+    # Ищем треки через Spotify API
     tracks = await search_tracks(user, query)
     if not tracks:
         await message.answer("❌ Ничего не найдено.")
         return
 
-    # Клавиатура с кнопками треков
+    # Формируем inline-клавиатуру с треками
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(
-            text=f"{track['artist']} — {track['name']}",
-            callback_data=f"track_select:{track['id']}"
-        )] for track in tracks
+        [
+            InlineKeyboardButton(
+                text=f"{track['artist']} — {track['name']}",
+                callback_data=f"track_select:{track['id']}"
+            )
+        ] for track in tracks
     ])
 
     await message.answer("🔍 Найденные треки:", reply_markup=keyboard)
 
 
-# Обработка выбора трека
 @router.callback_query(F.data.startswith("track_select:"))
 async def track_select_handler(callback: CallbackQuery):
+    """
+    Обработчик выбора трека из списка найденных.
+
+    Шаги:
+        1. Получаем ID трека из callback_data.
+        2. Проверяем авторизацию пользователя.
+        3. Получаем подробную информацию о треке.
+        4. Выводим inline-клавиатуру с кнопками:
+           ▶️ Воспроизвести
+           ❤️ Лайкнуть
+           ➕ В очередь
+    """
     track_id = callback.data.split(":")[1]
     user = await User.get_or_none(telegram_id=callback.from_user.id)
 
@@ -56,6 +87,7 @@ async def track_select_handler(callback: CallbackQuery):
         await callback.answer("❌ Не удалось получить информацию", show_alert=True)
         return
 
+    # Клавиатура с действиями для трека
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="▶️ Воспроизвести", callback_data=f"play:{track_id}")],
         [InlineKeyboardButton(text="❤️ Лайкнуть", callback_data=f"like:{track_id}")],
@@ -72,6 +104,9 @@ async def track_select_handler(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("queue:"))
 async def queue_track_handler(callback: CallbackQuery):
+    """
+    Добавление трека в очередь воспроизведения Spotify.
+    """
     track_id = callback.data.split(":")[1]
     user = await User.get_or_none(telegram_id=callback.from_user.id)
 
@@ -87,6 +122,9 @@ async def queue_track_handler(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("play:"))
 async def play_track_handler(callback: CallbackQuery):
+    """
+    Воспроизведение выбранного трека на активном устройстве пользователя.
+    """
     track_id = callback.data.split(":")[1]
     user = await User.get_or_none(telegram_id=callback.from_user.id)
 
@@ -100,9 +138,11 @@ async def play_track_handler(callback: CallbackQuery):
     await callback.answer(message, show_alert=not success)
 
 
-# Обработка лайка
 @router.callback_query(F.data.startswith("like:"))
 async def like_track_handler(callback: CallbackQuery):
+    """
+    Добавление трека в избранное пользователя (Liked Songs).
+    """
     track_id = callback.data.split(":")[1]
     user = await User.get_or_none(telegram_id=callback.from_user.id)
 

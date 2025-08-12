@@ -1,13 +1,17 @@
 import asyncio
 from bot.main import setup_bot
 from aiohttp import web
-from bot.spotify_redirect_server import app as redirect_app  # Импорт aiohttp-сервера
+from bot.spotify_redirect_server import app as redirect_app  # aiohttp-приложение для OAuth callback
 
 
 async def run_bot_and_server():
+    """
+    Запускает одновременно Telegram-бота и aiohttp сервер для обработки Spotify OAuth.
+    """
+    # Инициализация бота и диспетчера
     dp, bot = await setup_bot()
 
-    # Запуск aiohttp-сервера на фоне
+    # Запуск aiohttp сервера в фоне (порт 8888)
     runner = web.AppRunner(redirect_app)
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", 8888)
@@ -16,7 +20,7 @@ async def run_bot_and_server():
     print("✅ Redirect сервер запущен на http://localhost:8888")
     print("🚀 Бот запущен!")
 
-    # Запуск бота (long polling)
+    # Запуск Telegram-бота (long polling)
     await dp.start_polling(bot)
 
 

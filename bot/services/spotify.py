@@ -1,19 +1,33 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from bot.config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI, SOCKS5_PROXY
-from bot.database.models import User  # Модель пользователя
+from bot.config import (
+    SPOTIFY_CLIENT_ID,
+    SPOTIFY_CLIENT_SECRET,
+    SPOTIFY_REDIRECT_URI,
+    SOCKS5_PROXY
+)
+from bot.database.models import User
 from tortoise.transactions import in_transaction
 
+# Инициализация OAuth клиента Spotify
 oauth = SpotifyOAuth(
     client_id=SPOTIFY_CLIENT_ID,
     client_secret=SPOTIFY_CLIENT_SECRET,
     redirect_uri=SPOTIFY_REDIRECT_URI,
-    scope="user-library-read user-library-modify user-read-playback-state user-modify-playback-state playlist-read-private playlist-read-collaborative",
+    scope=(
+        "user-library-read user-library-modify "
+        "user-read-playback-state user-modify-playback-state "
+        "playlist-read-private playlist-read-collaborative"
+    ),
     proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY}
 )
 
 
 async def exchange_code_for_token(code: str, telegram_id: int):
+    """
+    Обменивает authorization code на access/refresh токен
+    и сохраняет их в базу данных.
+    """
     token_info = oauth.get_access_token(code, as_dict=True)
     access_token = token_info["access_token"]
     refresh_token = token_info["refresh_token"]
@@ -25,15 +39,18 @@ async def exchange_code_for_token(code: str, telegram_id: int):
         await user.save()
 
 
-async def refresh_user_token(user: User):
-    """Обновляет access_token пользователя через refresh_token"""
+async def refresh_user_token(user: User) -> str | None:
+    """
+    Обновляет access_token пользователя через refresh_token.
+    Возвращает новый access_token или None в случае ошибки.
+    """
     try:
         token_info = oauth.refresh_access_token(user.spotify_refresh_token)
         access_token = token_info["access_token"]
 
         async with in_transaction():
             user.spotify_access_token = access_token
-            # сохраняем, если пришёл новый refresh_token (иногда Spotify присылает его)
+            # Иногда Spotify присылает новый refresh_token
             if "refresh_token" in token_info:
                 user.spotify_refresh_token = token_info["refresh_token"]
             await user.save()
@@ -44,18 +61,17 @@ async def refresh_user_token(user: User):
         return None
 
 
-async def get_spotify_client(user: User):
+async def get_spotify_client(user: User) -> spotipy.Spotify:
     """
-    Возвращает Spotipy клиент.
-    Если токен истёк — обновляет его.
+    Возвращает Spotipy клиент для пользователя.
+    Если токен истёк — обновляет его автоматически.
     """
-
-    # Попробуем проверить работу токена простым запросом
     sp = spotipy.Spotify(auth=user.spotify_access_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
+
     try:
-        sp.current_user()  # тестовый запрос
+        sp.current_user()  # Тестовый запрос
     except spotipy.exceptions.SpotifyException as e:
-        if e.http_status == 401:  # Unauthorized — токен истёк
+        if e.http_status == 401:  # Unauthorized
             new_token = await refresh_user_token(user)
             if not new_token:
                 raise e
@@ -66,22 +82,24 @@ async def get_spotify_client(user: User):
     return sp
 
 
-async def search_tracks(user, query):
+async def search_tracks(user: User, query: str) -> list[dict]:
+    """Ищет треки по запросу (возвращает максимум 5 результатов)."""
     sp = await get_spotify_client(user)
     result = sp.search(q=query, type="track", limit=5)
 
-    tracks = []
-    for item in result["tracks"]["items"]:
-        tracks.append({
+    return [
+        {
             "id": item["id"],
             "name": item["name"],
             "artist": item["artists"][0]["name"],
             "spotify_url": item["external_urls"]["spotify"]
-        })
-    return tracks
+        }
+        for item in result["tracks"]["items"]
+    ]
 
 
-async def get_track_info(user, track_id):
+async def get_track_info(user: User, track_id: str) -> dict | None:
+    """Возвращает информацию о треке по его ID."""
     try:
         sp = await get_spotify_client(user)
         track = sp.track(track_id)
@@ -96,22 +114,18 @@ async def get_track_info(user, track_id):
         return None
 
 
-async def play_track(user, track_id):
+async def play_track(user: User, track_id: str) -> tuple[bool, str]:
+    """Запускает воспроизведение трека на активном устройстве."""
     try:
         sp = await get_spotify_client(user)
-
         devices = sp.devices()
+
         if not devices["devices"]:
             return False, "❌ Нет активного устройства Spotify."
 
-        # Получим ID первого активного устройства (или можно сделать выбор вручную позже)
         device_id = devices["devices"][0]["id"]
 
-        sp.start_playback(
-            device_id=device_id,
-            uris=[f"spotify:track:{track_id}"]
-        )
-
+        sp.start_playback(device_id=device_id, uris=[f"spotify:track:{track_id}"])
         return True, "▶️ Воспроизведение началось!"
     except spotipy.exceptions.SpotifyException as e:
         print(f"SpotifyException: {e}")
@@ -121,7 +135,8 @@ async def play_track(user, track_id):
         return False, "❌ Ошибка при воспроизведении."
 
 
-async def like_track(user, track_id):
+async def like_track(user: User, track_id: str) -> bool:
+    """Добавляет трек в избранное пользователя."""
     try:
         sp = await get_spotify_client(user)
         sp.current_user_saved_tracks_add([track_id])
@@ -131,17 +146,16 @@ async def like_track(user, track_id):
         return False
 
 
-async def add_track_to_queue(user, track_id):
+async def add_track_to_queue(user: User, track_id: str) -> tuple[bool, str]:
+    """Добавляет трек в очередь воспроизведения."""
     try:
         sp = await get_spotify_client(user)
-
         devices = sp.devices()
+
         if not devices["devices"]:
             return False, "❌ Нет активного устройства Spotify."
 
-        track_uri = f"spotify:track:{track_id}"
-        sp.add_to_queue(uri=track_uri)
-
+        sp.add_to_queue(uri=f"spotify:track:{track_id}")
         return True, "➕ Трек добавлен в очередь!"
     except spotipy.exceptions.SpotifyException as e:
         print(f"SpotifyException: {e}")
