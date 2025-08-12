@@ -56,10 +56,10 @@ async def track_select_handler(callback: CallbackQuery):
         await callback.answer("❌ Не удалось получить информацию", show_alert=True)
         return
 
-    # Новая inline-клавиатура
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="▶️ Воспроизвести", callback_data=f"play:{track_id}")],
-        [InlineKeyboardButton(text="❤️ Лайкнуть", callback_data=f"like:{track_id}")]
+        [InlineKeyboardButton(text="❤️ Лайкнуть", callback_data=f"like:{track_id}")],
+        [InlineKeyboardButton(text="➕ В очередь", callback_data=f"queue:{track_id}")]
     ])
 
     await callback.message.answer(
@@ -68,6 +68,21 @@ async def track_select_handler(callback: CallbackQuery):
         reply_markup=kb
     )
     await callback.answer()
+
+
+@router.callback_query(F.data.startswith("queue:"))
+async def queue_track_handler(callback: CallbackQuery):
+    track_id = callback.data.split(":")[1]
+    user = await User.get_or_none(telegram_id=callback.from_user.id)
+
+    if not user or not user.spotify_access_token:
+        await callback.answer("⚠️ Авторизация не найдена", show_alert=True)
+        return
+
+    from bot.services.spotify import add_track_to_queue
+    success, message = await add_track_to_queue(user, track_id)
+
+    await callback.answer(message, show_alert=not success)
 
 
 @router.callback_query(F.data.startswith("play:"))

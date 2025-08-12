@@ -129,3 +129,23 @@ async def like_track(user, track_id):
     except Exception as e:
         print(f"Error liking track: {e}")
         return False
+
+
+async def add_track_to_queue(user, track_id):
+    try:
+        sp = await get_spotify_client(user)
+
+        devices = sp.devices()
+        if not devices["devices"]:
+            return False, "❌ Нет активного устройства Spotify."
+
+        track_uri = f"spotify:track:{track_id}"
+        sp.add_to_queue(uri=track_uri)
+
+        return True, "➕ Трек добавлен в очередь!"
+    except spotipy.exceptions.SpotifyException as e:
+        print(f"SpotifyException: {e}")
+        return False, "❌ Ошибка при добавлении в очередь (возможно, нет Premium?)"
+    except Exception as e:
+        print(f"Error adding to queue: {e}")
+        return False, "❌ Ошибка при добавлении в очередь."
