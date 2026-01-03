@@ -1,0 +1,161 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bot.spotify_redirect_server &mdash; документация Spotify Bot 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e35015f7"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=cd1d70c9"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Spotify Bot
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../handlers.html">Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../services.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bot.html">Bot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">Spotify Bot</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Spotify Bot</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">bot.spotify_redirect_server</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код bot.spotify_redirect_server</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aiohttp</span><span class="w"> </span><span class="kn">import</span> <span class="n">web</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aiohttp.web_request</span><span class="w"> </span><span class="kn">import</span> <span class="n">Request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aiohttp.web_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">bot.services.spotify</span><span class="w"> </span><span class="kn">import</span> <span class="n">exchange_code_for_token</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Сервер для обработки колбэка Spotify OAuth</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Таблица маршрутов</span>
+<span class="n">routes</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">RouteTableDef</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="spotify_callback">
+<a class="viewcode-back" href="../../bot.html#bot.spotify_redirect_server.spotify_callback">[документация]</a>
+<span class="nd">@routes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/callback&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">spotify_callback</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Обработка колбэка Spotify после авторизации.</span>
+
+<span class="sd">    :param request: HTTP-запрос</span>
+<span class="sd">    :type request: Request</span>
+<span class="sd">    :return: HTTP-ответ с результатом авторизации</span>
+<span class="sd">    :rtype: Response</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Получение кода и состояния из запроса</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Проверка наличия обязательных параметров</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">state</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Ошибка: отсутствует code или state.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Обмен кода на токен</span>
+    <span class="k">await</span> <span class="n">exchange_code_for_token</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;✅ Авторизация прошла успешно! Можете вернуться в Telegram-бота.&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Создание приложения и регистрация маршрутов</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_routes</span><span class="p">(</span><span class="n">routes</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run_server">
+<a class="viewcode-back" href="../../bot.html#bot.spotify_redirect_server.run_server">[документация]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_server</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Запуск веб-сервера на порту 8888.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8888</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, kotohlebushek. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
