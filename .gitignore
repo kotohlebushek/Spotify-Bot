@@ -8,7 +8,7 @@ __pycache__/
 *.pyd
 
 # Виртуальное окружение
-docs/build/
+rst/build/
 venv/
 .env
 *.log
