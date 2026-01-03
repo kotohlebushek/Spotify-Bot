@@ -4,31 +4,25 @@ from tortoise.models import Model
 
 class User(Model):
     """
-    Модель пользователя Telegram, связанного с аккаунтом Spotify.
+    Модель пользователя для хранения данных Telegram и Spotify.
 
-    Поля:
-        id (int): Первичный ключ (генерируется автоматически).
-        telegram_id (int): Уникальный ID пользователя Telegram (используется для идентификации).
-        spotify_access_token (str | None): Access token для Spotify API (живёт ~1 час).
-        spotify_refresh_token (str | None): Refresh token для обновления access token'а.
-
-    Примечания:
-        - Access token используется для выполнения запросов от имени пользователя.
-        - Refresh token не истекает (обычно) и нужен для обновления access token.
-        - Если пользователь ещё не авторизовался через Spotify, токены будут равны None.
+    :ivar id: Внутренний ID записи
+    :ivar telegram_id: ID пользователя Telegram
+    :ivar spotify_access_token: Токен доступа Spotify
+    :ivar spotify_refresh_token: Токен обновления Spotify
     """
-
-    # Первичный ключ в базе данных
+    # Первичный ключ
     id = fields.IntField(pk=True)
 
-    # Уникальный ID пользователя в Telegram
+    # Telegram ID пользователя (уникальный)
     telegram_id = fields.BigIntField(unique=True)
 
-    # Access token для работы с API Spotify (истекает через 3600 сек)
+    # Токен доступа Spotify
     spotify_access_token = fields.TextField(null=True)
 
-    # Refresh token для продления access token
+    # Токен обновления Spotify
     spotify_refresh_token = fields.TextField(null=True)
 
     class Meta:
-        table = "users"  # Явное указание имени таблицы в БД
+        # Название таблицы в базе
+        table = "users"

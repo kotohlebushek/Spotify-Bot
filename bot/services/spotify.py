@@ -1,4 +1,5 @@
 import spotipy
+from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from bot.config import (
     SPOTIFY_CLIENT_ID,
@@ -10,7 +11,7 @@ from bot.database.models import User
 from tortoise.transactions import in_transaction
 from bot.utils.logger import logger
 
-# Инициализация OAuth клиента Spotify
+# Настройка OAuth для Spotify
 oauth = SpotifyOAuth(
     client_id=SPOTIFY_CLIENT_ID,
     client_secret=SPOTIFY_CLIENT_SECRET,
@@ -26,13 +27,19 @@ oauth = SpotifyOAuth(
 
 async def exchange_code_for_token(code: str, telegram_id: int):
     """
-    Обменивает authorization code на access/refresh токен
-    и сохраняет их в базу данных.
+    Обмен кода авторизации на токен и сохранение в БД.
+
+    :param code: Код авторизации от Spotify
+    :type code: str
+    :param telegram_id: ID пользователя Telegram
+    :type telegram_id: int
+    :return: None
     """
     token_info = oauth.get_access_token(code, as_dict=True)
     access_token = token_info["access_token"]
     refresh_token = token_info["refresh_token"]
 
+    # Сохранение токенов в БД
     async with in_transaction():
         user, _ = await User.get_or_create(telegram_id=telegram_id)
         user.spotify_access_token = access_token
@@ -42,16 +49,20 @@ async def exchange_code_for_token(code: str, telegram_id: int):
 
 async def refresh_user_token(user: User) -> str | None:
     """
-    Обновляет access_token пользователя через refresh_token.
-    Возвращает новый access_token или None в случае ошибки.
+    Обновление токена Spotify для пользователя.
+
+    :param user: Объект пользователя
+    :type user: User
+    :return: Новый access_token или None при ошибке
+    :rtype: str | None
     """
     try:
         token_info = oauth.refresh_access_token(user.spotify_refresh_token)
         access_token = token_info["access_token"]
 
+        # Обновление токенов в БД
         async with in_transaction():
             user.spotify_access_token = access_token
-            # Иногда Spotify присылает новый refresh_token
             if "refresh_token" in token_info:
                 user.spotify_refresh_token = token_info["refresh_token"]
             await user.save()
@@ -62,17 +73,22 @@ async def refresh_user_token(user: User) -> str | None:
         return None
 
 
-async def get_spotify_client(user: User) -> spotipy.Spotify:
+async def get_spotify_client(user: User) -> Spotify:
     """
-    Возвращает Spotipy клиент для пользователя.
-    Если токен истёк — обновляет его автоматически.
+    Получение клиента Spotify с проверкой токена.
+
+    :param user: Объект пользователя
+    :type user: User
+    :return: Объект Spotify
+    :rtype: Spotify
     """
     sp = spotipy.Spotify(auth=user.spotify_access_token, proxies={"http": SOCKS5_PROXY, "https": SOCKS5_PROXY})
 
+    # Проверка валидности токена
     try:
-        sp.current_user()  # Тестовый запрос
+        sp.current_user()
     except spotipy.exceptions.SpotifyException as e:
-        if e.http_status == 401:  # Unauthorized
+        if e.http_status == 401:
             new_token = await refresh_user_token(user)
             if not new_token:
                 raise e
@@ -84,10 +100,20 @@ async def get_spotify_client(user: User) -> spotipy.Spotify:
 
 
 async def search_tracks(user: User, query: str) -> list[dict]:
-    """Ищет треки по запросу (возвращает максимум 5 результатов)."""
+    """
+    Поиск треков в Spotify.
+
+    :param user: Пользователь
+    :type user: User
+    :param query: Строка поиска
+    :param query: str
+    :return: Список словарей с информацией о треках
+    :rtype: list[dict]
+    """
     sp = await get_spotify_client(user)
     result = sp.search(q=query, type="track", limit=5)
 
+    # Формирование списка треков
     return [
         {
             "id": item["id"],
@@ -100,7 +126,16 @@ async def search_tracks(user: User, query: str) -> list[dict]:
 
 
 async def get_track_info(user: User, track_id: str) -> dict | None:
-    """Возвращает информацию о треке по его ID."""
+    """
+    Получение информации о треке по ID.
+
+    :param user: Пользователь
+    :type user: User
+    :param track_id: ID трека
+    :type track_id: str
+    :return: Словарь с информацией о треке или None
+    :rtype: dict | None
+    """
     try:
         sp = await get_spotify_client(user)
         track = sp.track(track_id)
@@ -116,16 +151,25 @@ async def get_track_info(user: User, track_id: str) -> dict | None:
 
 
 async def play_track(user: User, track_id: str) -> tuple[bool, str]:
-    """Запускает воспроизведение трека на активном устройстве."""
+    """
+    Воспроизведение трека на устройстве пользователя.
+
+    :param user: Пользователь
+    :type user: User
+    :param track_id: ID трека
+    :type track_id: str
+    :return: Кортеж (успех, сообщение)
+    :rtype: tuple[bool, str]
+    """
     try:
         sp = await get_spotify_client(user)
         devices = sp.devices()
 
+        # Проверка наличия активного устройства
         if not devices["devices"]:
             return False, "❌ Нет активного устройства Spotify."
 
         device_id = devices["devices"][0]["id"]
-
         sp.start_playback(device_id=device_id, uris=[f"spotify:track:{track_id}"])
         return True, "▶️ Воспроизведение началось!"
     except spotipy.exceptions.SpotifyException as e:
@@ -137,7 +181,16 @@ async def play_track(user: User, track_id: str) -> tuple[bool, str]:
 
 
 async def like_track(user: User, track_id: str) -> bool:
-    """Добавляет трек в избранное пользователя."""
+    """
+    Добавление трека в избранное пользователя.
+
+    :param user: Пользователь
+    :type user: User
+    :param track_id: ID трека
+    :type track_id: str
+    :return: True при успехе, False при ошибке
+    :rtype: bool
+    """
     try:
         sp = await get_spotify_client(user)
         sp.current_user_saved_tracks_add([track_id])
@@ -148,7 +201,16 @@ async def like_track(user: User, track_id: str) -> bool:
 
 
 async def add_track_to_queue(user: User, track_id: str) -> tuple[bool, str]:
-    """Добавляет трек в очередь воспроизведения."""
+    """
+    Добавление трека в очередь воспроизведения.
+
+    :param user: Пользователь
+    :type user: User
+    :param track_id: ID трека
+    :type track_id: str
+    :return: Кортеж (успех, сообщение)
+    :rtype: tuple[bool, str]
+    """
     try:
         sp = await get_spotify_client(user)
         devices = sp.devices()

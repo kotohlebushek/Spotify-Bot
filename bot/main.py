@@ -6,21 +6,21 @@ from bot.handlers import user, spotify
 
 async def setup_bot() -> tuple[Dispatcher, Bot]:
     """
-    Инициализация базы данных, бота и диспетчера.
-    Регистрирует все необходимые роутеры.
+    Инициализация бота и диспетчера с подключением роутеров.
 
-    Возвращает кортеж (Dispatcher, Bot).
+    :return: Кортеж (Dispatcher, Bot)
+    :rtype: tuple[Dispatcher, Bot]
     """
-    # Инициализируем базу данных
+    # Инициализация базы данных
     await init_db()
 
-    # Создаем экземпляр бота
+    # Создание объекта бота
     bot = Bot(token=BOT_TOKEN)
 
-    # Создаем диспетчер
+    # Создание диспетчера
     dp = Dispatcher()
 
-    # Регистрируем обработчики (роутеры)
+    # Подключение роутеров обработчиков
     dp.include_routers(
         user.router,
         spotify.router,

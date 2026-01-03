@@ -10,21 +10,22 @@ router = Router()
 @router.message(F.text == "/start")
 async def start_handler(message: Message):
     """
-    Обработчик команды /start — отправляет пользователю ссылку
-    для авторизации через Spotify.
+    Обработка команды /start для авторизации через Spotify.
 
-    Если пользователь уже авторизован — просто приветствие.
+    :param message: Сообщение пользователя
+    :type message: Message
+    :return: None
     """
-
+    # ID пользователя Telegram
     user_id = message.from_user.id
 
-    # Проверяем в БД, авторизован ли пользователь
+    # Проверка существующего пользователя с токеном
     user = await User.get_or_none(telegram_id=user_id)
     if user and user.spotify_access_token:
         await message.answer(f"👋 Привет снова, {message.from_user.full_name}! Ты уже авторизован.")
         return
 
-    # Права, которые мы запрашиваем у пользователя
+    # Права доступа для Spotify
     scope = (
         "user-library-read "
         "user-library-modify "
@@ -34,7 +35,7 @@ async def start_handler(message: Message):
         "playlist-read-collaborative"
     )
 
-    # Формируем ссылку на авторизацию Spotify
+    # Формирование URL для авторизации
     auth_url = (
             "https://accounts.spotify.com/authorize?"
             + urllib.parse.urlencode({
@@ -42,16 +43,16 @@ async def start_handler(message: Message):
         "response_type": "code",
         "redirect_uri": SPOTIFY_REDIRECT_URI,
         "scope": scope,
-        "state": str(user_id)  # сохраняем telegram_id
+        "state": str(user_id)
     })
     )
 
-    # Клавиатура с кнопкой "Войти через Spotify"
+    # Кнопка для авторизации через Spotify
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🔐 Войти через Spotify", url=auth_url)]
     ])
 
-    # Отправляем приветственное сообщение с кнопкой
+    # Отправка приветственного сообщения с кнопкой
     await message.answer(
         "Привет! Чтобы использовать бота, нужно авторизоваться через Spotify:",
         reply_markup=kb
@@ -61,8 +62,13 @@ async def start_handler(message: Message):
 @router.message(F.text == "/help")
 async def help_handler(message: Message):
     """
-    Выводит информацию о боте и список доступных команд.
+    Обработка команды /help — вывод справки по боту.
+
+    :param message: Сообщение пользователя
+    :type message: Message
+    :return: None
     """
+    # Текст справки
     help_text = (
         "🤖 *Spotify Bot* — помощник для управления музыкой прямо из Telegram.\n\n"
         "Доступные команды:\n"
@@ -75,4 +81,5 @@ async def help_handler(message: Message):
         "   ➕ Добавить в очередь"
     )
 
+    # Отправка справки пользователю
     await message.answer(help_text, parse_mode="Markdown")

@@ -1,16 +1,20 @@
 from dotenv import load_dotenv
 import os
 
-# Загружаем переменные окружения из .env файла
+"""
+Загрузка переменных окружения из .env
+"""
+
+# Инициализация переменных окружения
 load_dotenv()
 
-# Telegram Bot
+# Токен Telegram бота
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Spotify API
+# Параметры Spotify
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 SPOTIFY_REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI")
 
-# Прокси (если используется)
+# Прокси SOCKS5 (опционально)
 SOCKS5_PROXY = os.getenv("SOCKS5_PROXY")

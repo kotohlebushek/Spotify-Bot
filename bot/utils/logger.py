@@ -1,28 +1,32 @@
 import logging
+from logging import Logger
 from logging.handlers import RotatingFileHandler
 import sys
 
 
-def setup_logger():
+def setup_logger() -> Logger:
     """
-    Настраивает логгер:
-    - Логирует в консоль (stdout)
-    - Логирует в файл bot.log с ротацией (макс 5 файлов по 1MB)
+    Настройка логгера для консоли и файла.
+
+    :return: Объект логгера
+    :rtype: Logger
     """
+    # Создание логгера и установка уровня
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
+    # Форматирование логов
     formatter = logging.Formatter(
         fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    # Обработчик для консоли
+    # Консольный обработчик
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # Обработчик для файла с ротацией
+    # Файловый обработчик с ротацией
     file_handler = RotatingFileHandler(
         "bot.log", maxBytes=1_000_000, backupCount=5, encoding="utf-8"
     )
@@ -32,4 +36,5 @@ def setup_logger():
     return logger
 
 
+# Инициализация логгера
 logger = setup_logger()
