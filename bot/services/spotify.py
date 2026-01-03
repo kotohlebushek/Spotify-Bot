@@ -106,7 +106,7 @@ async def search_tracks(user: User, query: str) -> list[dict]:
     :param user: Пользователь
     :type user: User
     :param query: Строка поиска
-    :param query: str
+    :type query: str
     :return: Список словарей с информацией о треках
     :rtype: list[dict]
     """

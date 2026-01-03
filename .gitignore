@@ -8,15 +8,11 @@ __pycache__/
 *.pyd
 
 # Виртуальное окружение
+docs/build/
 venv/
-.venv/
 .env
 *.log
 db.*
 
 # Spotify
 .cache
-
-# OS
-.DS_Store
-Thumbs.db
