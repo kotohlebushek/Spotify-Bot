@@ -34,4 +34,4 @@ language = 'ru'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_baseurl = "https://kotohlebushek.github.io/"
+html_baseurl = "https://kotohlebushek.github.io/Spotify-Bot"
