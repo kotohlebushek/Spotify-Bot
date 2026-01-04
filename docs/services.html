@@ -1,52 +1,97 @@
+
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="ru" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services &mdash; документация Spotify Bot 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
-    <title>Services &#8212; документация Spotify Bot 1.0.0</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=6625fa76" />
-    <link rel="stylesheet" type="text/css" href="_static/groundwork.css?v=594d7a89" />
-    <script src="_static/documentation_options.js?v=e35015f7"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/translations.js?v=cd1d70c9"></script>
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Алфавитный указатель" href="genindex.html" />
     <link rel="search" title="Поиск" href="search.html" />
     <link rel="next" title="Utils" href="utils.html" />
     <link rel="prev" title="Handlers" href="handlers.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>Навигация</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="Алфавитный указатель"
-             accesskey="I">указатель</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Содержание модулей Python"
-             >модули</a> |</li>
-        <li class="right" >
-          <a href="utils.html" title="Utils"
-             accesskey="N">вперёд</a> |</li>
-        <li class="right" >
-          <a href="handlers.html" title="Handlers"
-             accesskey="P">назад</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">документация Spotify Bot 1.0.0</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Services</a></li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Spotify Bot
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="handlers.html">Handlers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Services</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.add_track_to_queue"><code class="docutils literal notranslate"><span class="pre">add_track_to_queue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.exchange_code_for_token"><code class="docutils literal notranslate"><span class="pre">exchange_code_for_token()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.get_spotify_client"><code class="docutils literal notranslate"><span class="pre">get_spotify_client()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.get_track_info"><code class="docutils literal notranslate"><span class="pre">get_track_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.like_track"><code class="docutils literal notranslate"><span class="pre">like_track()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.play_track"><code class="docutils literal notranslate"><span class="pre">play_track()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.refresh_user_token"><code class="docutils literal notranslate"><span class="pre">refresh_user_token()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bot.services.spotify.search_tracks"><code class="docutils literal notranslate"><span class="pre">search_tracks()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bot.html">Bot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Spotify Bot</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Spotify Bot</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Services</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/services.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-bot.services.spotify">
-<span id="services"></span><h1>Services<a class="headerlink" href="#module-bot.services.spotify" title="Ссылка на этот заголовок">¶</a></h1>
+<span id="services"></span><h1>Services<a class="headerlink" href="#module-bot.services.spotify" title="Ссылка на этот заголовок"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.add_track_to_queue">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">add_track_to_queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#add_track_to_queue"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.add_track_to_queue" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">add_track_to_queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#add_track_to_queue"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.add_track_to_queue" title="Ссылка на это определение"></a></dt>
 <dd><p>Добавление трека в очередь воспроизведения.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -66,7 +111,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.exchange_code_for_token">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">exchange_code_for_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telegram_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bot/services/spotify.html#exchange_code_for_token"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.exchange_code_for_token" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">exchange_code_for_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telegram_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bot/services/spotify.html#exchange_code_for_token"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.exchange_code_for_token" title="Ссылка на это определение"></a></dt>
 <dd><p>Обмен кода авторизации на токен и сохранение в БД.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -83,7 +128,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.get_spotify_client">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">get_spotify_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Spotify</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#get_spotify_client"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.get_spotify_client" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">get_spotify_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Spotify</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#get_spotify_client"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.get_spotify_client" title="Ссылка на это определение"></a></dt>
 <dd><p>Получение клиента Spotify с проверкой токена.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -100,7 +145,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.get_track_info">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">get_track_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#get_track_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.get_track_info" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">get_track_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#get_track_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.get_track_info" title="Ссылка на это определение"></a></dt>
 <dd><p>Получение информации о треке по ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -120,7 +165,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.like_track">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">like_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#like_track"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.like_track" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">like_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#like_track"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.like_track" title="Ссылка на это определение"></a></dt>
 <dd><p>Добавление трека в избранное пользователя.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -140,7 +185,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.play_track">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">play_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#play_track"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.play_track" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">play_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#play_track"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.play_track" title="Ссылка на это определение"></a></dt>
 <dd><p>Воспроизведение трека на устройстве пользователя.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -160,7 +205,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.refresh_user_token">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">refresh_user_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#refresh_user_token"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.refresh_user_token" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">refresh_user_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#refresh_user_token"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.refresh_user_token" title="Ссылка на это определение"></a></dt>
 <dd><p>Обновление токена Spotify для пользователя.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -177,7 +222,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bot.services.spotify.search_tracks">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">search_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#search_tracks"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.search_tracks" title="Ссылка на это определение">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bot.services.spotify.</span></span><span class="sig-name descname"><span class="pre">search_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="database.html#bot.database.models.User" title="bot.database.models.User"><span class="pre">User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/bot/services/spotify.html#search_tracks"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#bot.services.spotify.search_tracks" title="Ссылка на это определение"></a></dt>
 <dd><p>Поиск треков в Spotify.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Параметры<span class="colon">:</span></dt>
@@ -198,82 +243,34 @@
 </section>
 
 
-            <div class="clearer"></div>
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="index.html">Оглавление</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">Services</a><ul>
-<li><a class="reference internal" href="#bot.services.spotify.add_track_to_queue"><code class="docutils literal notranslate"><span class="pre">add_track_to_queue()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.exchange_code_for_token"><code class="docutils literal notranslate"><span class="pre">exchange_code_for_token()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.get_spotify_client"><code class="docutils literal notranslate"><span class="pre">get_spotify_client()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.get_track_info"><code class="docutils literal notranslate"><span class="pre">get_track_info()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.like_track"><code class="docutils literal notranslate"><span class="pre">like_track()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.play_track"><code class="docutils literal notranslate"><span class="pre">play_track()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.refresh_user_token"><code class="docutils literal notranslate"><span class="pre">refresh_user_token()</span></code></a></li>
-<li><a class="reference internal" href="#bot.services.spotify.search_tracks"><code class="docutils literal notranslate"><span class="pre">search_tracks()</span></code></a></li>
-</ul>
-</li>
-</ul>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="handlers.html" class="btn btn-neutral float-left" title="Handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, kotohlebushek. </p>
   </div>
-  <div>
-    <h4>Предыдущий раздел</h4>
-    <p class="topless"><a href="handlers.html"
-                          title="предыдущая глава">Handlers</a></p>
-  </div>
-  <div>
-    <h4>Следующий раздел</h4>
-    <p class="topless"><a href="utils.html"
-                          title="следующая глава">Utils</a></p>
-  </div>
-  <div role="note" aria-label="source link">
-    <h3>Эта страница</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/services.rst.txt"
-            rel="nofollow">Исходный текст</a></li>
-    </ul>
-   </div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Быстрый поиск</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Искать" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>Навигация</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="Алфавитный указатель"
-             >указатель</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Содержание модулей Python"
-             >модули</a> |</li>
-        <li class="right" >
-          <a href="utils.html" title="Utils"
-             >вперёд</a> |</li>
-        <li class="right" >
-          <a href="handlers.html" title="Handlers"
-             >назад</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">документация Spotify Bot 1.0.0</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Services</a></li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-    &#169; Авторские права 2026, kotohlebushek.
-      Создано с использованием <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>
