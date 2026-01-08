@@ -1,0 +1,7 @@
+aiogram==3.21.0
+python-dotenv==1.1.1
+Sphinx==8.2.3
+sphinx-autobuild==2025.8.25
+sphinx-rtd-theme==3.0.2
+spotipy==2.25.1
+tortoise-orm==0.25.1
